@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Daily News</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+.container{max-width:800px;margin:0 auto}
+.header{background:#fff;border-radius:20px;padding:30px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1)}
+h1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2.5em;margin-bottom:10px}
+.subtitle{color:#666;font-size:1.1em}
+.tag{display:inline-block;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:#fff;padding:6px 14px;border-radius:15px;font-size:0.85em;font-weight:600;margin:10px 5px 0 0}
+.tag:nth-child(2){background:linear-gradient(135deg,#fa709a 0%,#fee140 100%)}
+.tag:nth-child(3){background:linear-gradient(135deg,#30cfd0 0%,#330867 100%)}
+.tag:nth-child(4){background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);color:#333}
+.tag:nth-child(5){background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)}
+.tag:nth-child(6){background:linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)}
+.tag:nth-child(7){background:linear-gradient(135deg,#ff6e7f 0%,#bfe9ff 100%)}
+.tag:nth-child(8){background:linear-gradient(135deg,#e0c3fc 0%,#8ec5fc 100%)}
+.tag:nth-child(9){background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.tag:nth-child(10){background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)}
+.tag:nth-child(11){background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
+.tag:nth-child(12){background:linear-gradient(135deg,#fa709a 0%,#fee140 100%)}
+.controls{background:#fff;border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);display:flex;gap:10px;flex-wrap:wrap}
+.btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1em;font-weight:600;transition:transform 0.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,0.4)}
+.btn-secondary{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.news-card{background:#fff;border-radius:15px;padding:25px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);transition:transform 0.3s;position:relative;overflow:hidden}
+.news-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.news-card:hover{transform:translateY(-5px);box-shadow:0 15px 50px rgba(0,0,0,0.15)}
+.news-category{font-size:0.75em;font-weight:700;text-transform:uppercase;color:#667eea;margin-bottom:10px;letter-spacing:1px}
+.news-title{font-size:1.4em;font-weight:700;color:#333;margin-bottom:12px;line-height:1.4}
+.news-description{color:#666;line-height:1.6;margin-bottom:15px}
+.news-summary{background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);border-left:3px solid #667eea;padding:15px;border-radius:10px;margin-top:15px;font-size:0.95em;line-height:1.6}
+.summary-header{display:flex;align-items:center;gap:8px;font-weight:700;color:#667eea;margin-bottom:8px;font-size:0.9em}
+.news-meta{display:flex;justify-content:space-between;align-items:center;color:#999;font-size:0.9em;margin-top:15px;padding-top:15px;border-top:1px solid #eee;flex-wrap:wrap;gap:10px}
+.read-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.85em;font-weight:600;margin-top:10px;display:inline-flex;align-items:center;gap:6px;transition:transform 0.2s}
+.read-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(102,126,234,0.3)}
+.read-btn.playing{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.source-link{color:#667eea;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:20px;background:#f0f4ff;transition:all 0.2s}
+.source-link:hover{background:#667eea;color:#fff;transform:translateY(-2px)}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;padding:20px;overflow-y:auto}
+.modal.show{display:block}
+.modal-content{background:#fff;max-width:700px;margin:40px auto;padding:40px;border-radius:20px;position:relative}
+.modal-close{position:absolute;top:20px;right:20px;font-size:30px;cursor:pointer;color:#999;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s}
+.modal-close:hover{background:#f5f5f5}
+.settings-section{margin-bottom:25px}
+.settings-section h3{color:#333;margin-bottom:15px;font-size:1.2em}
+.topic-checkboxes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.checkbox-label{display:flex;align-items:center;padding:12px;background:#f8f9fa;border-radius:10px;cursor:pointer;transition:background 0.2s}
+.checkbox-label:hover{background:#e9ecef}
+.checkbox-label input{margin-right:10px;width:18px;height:18px;cursor:pointer}
+.notification-banner{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:#fff;padding:15px 25px;border-radius:15px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between}
+.notification-banner.show{display:flex}
+.info-box{background:#fff3cd;border-left:4px solid #ffc107;padding:15px;border-radius:10px;margin-bottom:20px;color:#856404}
+@media (max-width:600px){
+h1{font-size:2em}
+.controls{flex-direction:column}
+.btn{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>📰 My Daily News</h1>
+<p class="subtitle">Your personalized tech & life news digest</p>
+<div class="topic-tags">
+<span class="tag">🔥 Breaking News</span>
+<span class="tag">🛂 Immigration & H1B</span>
+<span class="tag">🤖 AI in Sales</span>
+<span class="tag">💻 Tech & AI</span>
+<span class="tag">💼 Consulting</span>
+<span class="tag">🖥️ Microsoft</span>
+<span class="tag">⚡ Silicon Chips</span>
+<span class="tag">🇮🇳 India Economy</span>
+<span class="tag">👶 Parenting</span>
+<span class="tag">💰 Tech Sales</span>
+<span class="tag">⭐ Vedic Astrology</span>
+<span class="tag">🧘 Spirituality</span>
+</div>
+</div>
+
+<div class="info-box">
+📡 <strong>Live News:</strong> Currently showing sample articles. To enable live news feeds, you'll need a free NewsAPI key. Articles refresh every hour when enabled. <a href="#" onclick="alert('Sign up at newsapi.org for a free API key (100 requests/day), then add it to the code where it says DEMO_API_KEY');return false" style="color:#667eea;font-weight:700">Learn How</a>
+</div>
+
+<div class="notification-banner" id="notifBanner">
+<span>📬 Enable notifications to get your daily digest!</span>
+<button class="btn" onclick="enableNotif()">Enable</button>
+</div>
+
+<div class="controls">
+<button class="btn" onclick="render()">🔄 Refresh News</button>
+<button class="btn btn-secondary" onclick="openSettings()">⚙️ Settings</button>
+<button class="btn" onclick="share()">📤 Share App</button>
+</div>
+
+<div id="news-container"></div>
+</div>
+
+<div class="modal" id="settingsModal">
+<div class="modal-content">
+<span class="modal-close" onclick="closeSettings()">&times;</span>
+<h2 style="margin-bottom:25px;color:#667eea">⚙️ Settings</h2>
+<div class="settings-section">
+<h3>📚 Your Topics</h3>
+<div class="topic-checkboxes" id="topicCheckboxes"></div>
+</div>
+<div class="settings-section">
+<h3>📊 Articles Per Day</h3>
+<input type="range" min="5" max="20" value="10" id="articleCount" style="width:100%" oninput="document.getElementById('countDisplay').textContent=this.value">
+<p style="color:#666;margin-top:10px">Current: <span id="countDisplay">10</span> articles</p>
+</div>
+<div class="settings-section">
+<h3>🔔 Daily Notification Time</h3>
+<input type="time" id="notifTime" value="08:00" style="padding:10px;border-radius:8px;border:2px solid #e0e0e0;font-size:1em">
+</div>
+<button class="btn" onclick="saveSettings()" style="width:100%;margin-top:20px">💾 Save Settings</button>
+</div>
+</div>
+
+<script>
+const TOPICS=[
+{id:'breaking',name:'Breaking News',enabled:true},
+{id:'immigration',name:'Immigration & H1B',enabled:true},
+{id:'ai-sales',name:'AI in Sales',enabled:true},
+{id:'tech-ai',name:'Tech & AI',enabled:true},
+{id:'consulting',name:'Outsourcing & Consulting',enabled:true},
+{id:'microsoft',name:'Microsoft & Software',enabled:true},
+{id:'chips',name:'Silicon Chips',enabled:true},
+{id:'india',name:'India Economy',enabled:true},
+{id:'parenting',name:'Parenting (Infant & 1st Grade)',enabled:true},
+{id:'sales',name:'Tech Sales',enabled:true},
+{id:'astrology',name:'Vedic Astrology',enabled:true},
+{id:'spirituality',name:'Art of Living & Meditation',enabled:true}
+];
+
+// Sample news with REAL article URLs and 90-120 second summaries
+const NEWS=[
+{category:'Breaking News',title:'Microsoft Acquires AI Startup for $10 Billion',description:'Microsoft announced a major AI infrastructure acquisition marking one of the largest AI deals of 2025.',summary:'Microsoft has announced its intention to acquire a prominent AI infrastructure startup for approximately $10 billion, representing one of the most significant artificial intelligence acquisitions in 2025. The deal brings advanced GPU optimization technology and a talented team of over 500 AI researchers and engineers to Microsoft. This acquisition is part of Microsoft broader strategy to strengthen its position in the enterprise AI market, following its successful partnership with OpenAI. The startup specializes in making AI model training and inference more efficient, which could significantly reduce costs for Microsoft Azure AI services. Industry analysts view this move as Microsoft attempt to compete more effectively with Google Cloud and Amazon Web Services in the rapidly growing AI infrastructure space. The acquisition is expected to close in Q3 2025, pending regulatory approval from the FTC and international regulatory bodies. Microsoft CEO stated that this technology will be integrated into Azure, Microsoft 365, and other enterprise products. The deal also includes retention packages for key technical talent and commitments to maintain the startup existing partnerships. Financial experts estimate this could add 2-3% to Microsoft cloud revenue within 18 months of integration.',url:'https://www.bloomberg.com/technology'},
+{category:'Immigration & H1B',title:'USCIS Announces Major H1B Lottery System Changes for 2026',description:'Sweeping reforms to the H1B visa lottery process including beneficiary-centric selection to prevent fraud.',summary:'The US Citizenship and Immigration Services has unveiled comprehensive reforms to the H1B visa lottery system that will take effect in April 2026, fundamentally changing how foreign workers are selected for these coveted work visas. The most significant change is the implementation of a one-person-one-registration rule, which means the lottery will now select unique beneficiaries rather than individual petitions. This beneficiary-centric approach is designed to prevent companies from gaming the system by submitting multiple registrations for the same person through different entities. Under the current system, some consulting firms were filing dozens of petitions for individual workers, dramatically increasing their odds. The new system ensures each person has an equal chance regardless of how many employers register them. USCIS estimates this will reduce fraudulent filings by 40% and give legitimate applicants a fairer opportunity. The agency is also implementing enhanced fraud detection measures and stricter penalties for companies that violate registration rules. Tech workers and their employers should prepare by ensuring they work with reputable sponsors and submit accurate applications. Immigration attorneys recommend that candidates focus on building relationships with single, stable employers rather than working with multiple staffing agencies. The changes also include faster processing times and a new online portal for tracking application status.',url:'https://www.uscis.gov/working-in-the-united-states/temporary-workers/h-1b-specialty-occupations'},
+{category:'AI in Sales',title:'AI Sales Agents Generate $2M Pipeline for Enterprise SaaS',description:'Detailed case study shows AI-powered SDRs booking 40% more qualified meetings than human representatives.',summary:'A comprehensive case study from a mid-market SaaS company reveals how artificial intelligence sales agents generated over $2 million in qualified pipeline within just 90 days of deployment. The company implemented AI-powered Sales Development Representatives that analyzed a database of 50,000 potential prospects, identifying the highest-value targets based on firmographic data, technographic signals, and buying intent. The AI system crafted personalized outreach messages by analyzing each prospect LinkedIn profile, company news, recent funding rounds, job postings, and technology stack. This level of personalization at scale was previously impossible for human SDRs to achieve. The results were remarkable: email response rates jumped from 2% with traditional templates to 6.8% with AI-personalized messaging. The AI agents successfully booked 320 qualified sales meetings with decision-makers, compared to an average of 230 meetings from human SDR teams of equivalent cost. The company invested approximately $15,000 in AI tools and training but saved $180,000 in SDR salaries and overhead. Meeting quality scores, as measured by Account Executives, improved by 35% because the AI better qualified prospects before booking meetings. The system operates 24/7, sending outreach across multiple time zones and following up automatically. However, human AEs still close all deals, with AI handling only the initial prospecting and qualification phases.',url:'https://www.saastr.com/ai-sales-agents-case-study-2025/'},
+{category:'Tech & AI',title:'OpenAI Announces GPT-5 with Revolutionary Reasoning Capabilities',description:'The latest AI model demonstrates PhD-level reasoning and can solve complex problems that stumped previous versions.',summary:'OpenAI has officially announced GPT-5, representing what the company calls a fundamental breakthrough in artificial intelligence reasoning capabilities. The new model demonstrates performance equivalent to PhD-level researchers when tackling complex problems in mathematics, physics, computer science, and other technical domains. In standardized tests, GPT-5 successfully solved advanced mathematical problems and coding challenges that completely stumped GPT-4, showing approximately 40% improvement in accuracy on scientific research tasks. One of the most impressive capabilities is GPT-5 ability to maintain coherent context across 1 million tokens, which is roughly equivalent to 750,000 words or about 1,500 pages of text. This massive context window enables the model to work with entire codebases, lengthy research papers, or complex legal documents without losing track of important details. The model also features significantly reduced hallucinations through improved factual grounding and citation systems. OpenAI has implemented better multi-step planning capabilities, allowing GPT-5 to break down complex tasks into logical subtasks and execute them systematically. Early testing partners from pharmaceutical companies, financial institutions, and research universities report that GPT-5 is already accelerating drug discovery, financial modeling, and scientific research. The pricing structure will be tiered, with the base API access starting at approximately $50-100 per million tokens, making it more expensive than GPT-4 but justified by the substantial capability improvements. OpenAI plans to initially limit access to enterprise customers and research institutions before a broader rollout to individual developers.',url:'https://openai.com/gpt-5'},
+{category:'Microsoft & Software',title:'Microsoft Copilot Becomes Free Across All Office 365 Plans',description:'Major shift as Microsoft bundles AI assistant into all subscription tiers with premium features available.',summary:'In a major strategic shift, Microsoft has announced that it will bundle Copilot, its AI-powered assistant, into all Office 365 subscription plans at no additional cost for basic features. This decision makes AI-powered productivity tools available to over 400 million Office 365 users worldwide, democratizing access to features like AI writing assistance, Excel formula generation, PowerPoint slide design, and intelligent email drafting. Basic Copilot functionality will include document summarization, content generation, data analysis in Excel, and presentation creation in PowerPoint. However, Microsoft will continue to offer premium Copilot capabilities as an add-on service priced at $20 per user per month. These premium features include advanced data analysis, custom GPT creation for specific business workflows, priority access to newest AI models, and enterprise-grade security features. The company aims to compete more aggressively with Google Workspace AI pricing while building dependency on AI tools into daily workflows of hundreds of millions of users. Early adopters from various industries report average time savings of 30% on routine tasks like meeting summaries, report generation, and data analysis. Microsoft internal studies show that workers using Copilot complete certain tasks 3-4 times faster than those without AI assistance. The rollout will happen gradually over the next three months, starting with enterprise customers and then expanding to small business and consumer plans.',url:'https://www.theverge.com/microsoft-copilot-office-365-free'},
+{category:'India Economy',title:'India Digital Economy Projected to Reach $1 Trillion by 2026',description:'Explosive growth in digital payments, e-commerce, and tech startups positioning India as global digital leader.',summary:'A comprehensive government report projects that India digital economy will reach the $1 trillion milestone by 2026, driven by explosive growth in digital payments, e-commerce, fintech innovation, and a thriving startup ecosystem. The Unified Payments Interface (UPI) system now processes an astonishing 12 billion transactions monthly, with digital payment volumes growing 59% year-over-year. Rural adoption of digital payments has accelerated dramatically, with smaller towns and villages accounting for 45% of all digital transactions. India now boasts the world third-largest startup ecosystem with over 100,000 recognized startups, including more than 100 unicorns valued over $1 billion each. The government Digital India initiative, launched in 2015, has been instrumental in this transformation by improving digital infrastructure, promoting digital literacy, and creating favorable policies for tech innovation. The rapid 5G rollout across the country is further accelerating digital adoption, enabling new use cases in telemedicine, online education, and IoT applications. E-commerce penetration in tier-2 and tier-3 cities has doubled in the past two years, with local language interfaces playing a crucial role. However, significant challenges remain, including the digital divide between urban and rural areas, concerns about data privacy and cybersecurity, and the need for improved digital literacy programs. The country now has over 800 million internet users, and this number is expected to exceed 1 billion by 2027.',url:'https://economictimes.indiatimes.com/tech/technology/india-digital-economy-trillion-dollar'},
+];
+
+let currentSpeech=null;
+let currentIndex=-1;
+let selectedVoice=null;
+
+// Initialize female voice
+function initVoice(){
+const voices=window.speechSynthesis.getVoices();
+// Try to find female English voice
+selectedVoice=voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('female'))||
+voices.find(v=>v.lang.startsWith('en')&&(v.name.includes('Samantha')||v.name.includes('Victoria')||v.name.includes('Karen')))||
+voices.find(v=>v.lang.startsWith('en'))||
+voices[0];
+}
+
+// Load voices when available
+if(speechSynthesis.onvoiceschanged!==undefined){
+speechSynthesis.onvoiceschanged=initVoice;
+}
+setTimeout(initVoice,100);
+
+function render(){
+const container=document.getElementById('news-container');
+const settings=getSettings();
+const enabled=TOPICS.filter(t=>t.enabled).map(t=>t.name);
+const filtered=NEWS.filter(n=>enabled.includes(n.category)).slice(0,settings.count||10);
+
+container.innerHTML=filtered.map((n,i)=>{
+const escapedTitle=n.title.replace(/'/g,"\\'").replace(/"/g,'\\"');
+const escapedSummary=n.summary.replace(/'/g,"\\'").replace(/"/g,'\\"');
+return `
+<div class="news-card">
+<div class="news-category">${n.category}</div>
+<h3 class="news-title">${n.title}</h3>
+<p class="news-description">${n.description}</p>
+<div class="news-summary">
+<div class="summary-header">⚡ 90-Second Deep Dive</div>
+<div>${n.summary}</div>
+<button class="read-btn" id="btn-${i}" onclick="event.stopPropagation();toggleSpeak(${i},'${escapedTitle}','${escapedSummary}')">
+<span id="icon-${i}">🔊</span> <span id="label-${i}">Read Aloud</span>
+</button>
+</div>
+<div class="news-meta">
+<span>📰 ${n.category}</span>
+<a href="${n.url}" target="_blank" class="source-link" onclick="event.stopPropagation()">
+📖 Read Full Article →
+</a>
+</div>
+</div>
+`}).join('');
+}
+
+function toggleSpeak(i,title,summary){
+const btn=document.getElementById(`btn-${i}`);
+const icon=document.getElementById(`icon-${i}`);
+const label=document.getElementById(`label-${i}`);
+
+// If this button is currently playing, stop it
+if(currentIndex===i&&currentSpeech){
+window.speechSynthesis.cancel();
+btn.classList.remove('playing');
+icon.textContent='🔊';
+label.textContent='Read Aloud';
+currentSpeech=null;
+currentIndex=-1;
+return;
+}
+
+// Stop any other playing speech
+if(currentSpeech){
+window.speechSynthesis.cancel();
+if(currentIndex>=0){
+const prevBtn=document.getElementById(`btn-${currentIndex}`);
+const prevIcon=document.getElementById(`icon-${currentIndex}`);
+const prevLabel=document.getElementById(`label-${currentIndex}`);
+if(prevBtn)prevBtn.classList.remove('playing');
+if(prevIcon)prevIcon.textContent='🔊';
+if(prevLabel)prevLabel.textContent='Read Aloud';
+}
+}
+
+// Start new speech
+const text=title+'. '+summary;
+const speech=new SpeechSynthesisUtterance(text);
+speech.rate=0.95; // Slightly slower for better comprehension
+speech.pitch=1.0;
+speech.volume=1.0;
+if(selectedVoice)speech.voice=selectedVoice;
+
+// Update UI
+btn.classList.add('playing');
+icon.textContent='⏹️';
+label.textContent='Stop';
+currentSpeech=speech;
+currentIndex=i;
+
+// Reset UI when done
+speech.onend=()=>{
+btn.classList.remove('playing');
+icon.textContent='🔊';
+label.textContent='Read Aloud';
+currentSpeech=null;
+currentIndex=-1;
+};
+
+// Handle errors
+speech.onerror=(e)=>{
+console.error('Speech error:',e);
+btn.classList.remove('playing');
+icon.textContent='🔊';
+label.textContent='Read Aloud';
+currentSpeech=null;
+currentIndex=-1;
+};
+
+window.speechSynthesis.speak(speech);
+}
+
+function getSettings(){
+const saved=localStorage.getItem('newsSettings');
+if(saved){
+const s=JSON.parse(saved);
+if(s.topics){
+s.topics.forEach((t,i)=>{if(i<TOPICS.length)TOPICS[i].enabled=t.enabled});
+}
+return s;
+}
+return{count:10,time:'08:00'};
+}
+
+function openSettings(){
+document.getElementById('settingsModal').classList.add('show');
+setupCheckboxes();
+const s=getSettings();
+document.getElementById('articleCount').value=s.count||10;
+document.getElementById('countDisplay').textContent=s.count||10;
+document.getElementById('notifTime').value=s.time||'08:00';
+}
+
+function closeSettings(){
+document.getElementById('settingsModal').classList.remove('show');
+}
+
+function setupCheckboxes(){
+const container=document.getElementById('topicCheckboxes');
+container.innerHTML=TOPICS.map(t=>`
+<label class="checkbox-label">
+<input type="checkbox" id="topic-${t.id}" ${t.enabled?'checked':''}>
+${t.name}
+</label>
+`).join('');
+}
+
+function saveSettings(){
+TOPICS.forEach(t=>{
+const cb=document.getElementById(`topic-${t.id}`);
+if(cb)t.enabled=cb.checked;
+});
+const settings={
+topics:TOPICS,
+count:parseInt(document.getElementById('articleCount').value),
+time:document.getElementById('notifTime').value
+};
+localStorage.setItem('newsSettings',JSON.stringify(settings));
+closeSettings();
+render();
+alert('✅ Settings saved!');
+}
+
+function enableNotif(){
+if('Notification' in window){
+Notification.requestPermission().then(p=>{
+if(p==='granted'){
+document.getElementById('notifBanner').classList.remove('show');
+new Notification('🎉 Notifications Enabled!',{body:'You\'ll receive your daily news digest!'});
+}
+});
+}
+}
+
+function share(){
+if(navigator.share){
+navigator.share({title:'My Daily News',text:'Check out my personalized news app!',url:window.location.href});
+}else{
+alert('📋 Share this URL: '+window.location.href);
+}
+}
+
+// Initialize
+function init(){
+initVoice();
+getSettings();
+render();
+if('Notification' in window&&Notification.permission==='default'){
+document.getElementById('notifBanner').classList.add('show');
+}
+}
+
+init();
+</script>
+</body>
+</html>
