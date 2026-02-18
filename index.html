@@ -14,18 +14,49 @@ h1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background
 .tag{display:inline-block;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:#fff;padding:6px 14px;border-radius:15px;font-size:0.85em;font-weight:600;margin:10px 5px 0 0}
 .tag:nth-child(2){background:linear-gradient(135deg,#fa709a 0%,#fee140 100%)}
 .tag:nth-child(3){background:linear-gradient(135deg,#30cfd0 0%,#330867 100%)}
+.tag:nth-child(4){background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);color:#333}
+.tag:nth-child(5){background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)}
+.tag:nth-child(6){background:linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)}
+.tag:nth-child(7){background:linear-gradient(135deg,#ff6e7f 0%,#bfe9ff 100%)}
+.tag:nth-child(8){background:linear-gradient(135deg,#e0c3fc 0%,#8ec5fc 100%)}
+.tag:nth-child(9){background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.tag:nth-child(10){background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)}
+.tag:nth-child(11){background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
+.tag:nth-child(12){background:linear-gradient(135deg,#fa709a 0%,#fee140 100%)}
 .controls{background:#fff;border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);display:flex;gap:10px;flex-wrap:wrap}
 .btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1em;font-weight:600;transition:transform 0.2s}
-.btn:hover{transform:translateY(-2px)}
-.news-card{background:#fff;border-radius:15px;padding:25px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);cursor:pointer;transition:transform 0.3s}
-.news-card:hover{transform:translateY(-5px)}
-.news-category{font-size:0.75em;font-weight:700;text-transform:uppercase;color:#667eea;margin-bottom:10px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,0.4)}
+.btn-secondary{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.news-card{background:#fff;border-radius:15px;padding:25px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden}
+.news-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.news-card:hover{transform:translateY(-5px);box-shadow:0 15px 50px rgba(0,0,0,0.15)}
+.news-category{font-size:0.75em;font-weight:700;text-transform:uppercase;color:#667eea;margin-bottom:10px;letter-spacing:1px}
 .news-title{font-size:1.4em;font-weight:700;color:#333;margin-bottom:12px;line-height:1.4}
 .news-description{color:#666;line-height:1.6;margin-bottom:15px}
-.news-summary{background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);border-left:3px solid #667eea;padding:15px;border-radius:10px;margin-top:15px;font-size:0.95em}
-.summary-header{font-weight:700;color:#667eea;margin-bottom:8px;font-size:0.9em}
+.news-summary{background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);border-left:3px solid #667eea;padding:15px;border-radius:10px;margin-top:15px;font-size:0.95em;line-height:1.6}
+.summary-header{display:flex;align-items:center;gap:8px;font-weight:700;color:#667eea;margin-bottom:8px;font-size:0.9em}
 .news-meta{display:flex;justify-content:space-between;color:#999;font-size:0.9em;margin-top:15px;padding-top:15px;border-top:1px solid #eee}
-.read-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.85em;margin-top:10px}
+.read-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.85em;font-weight:600;margin-top:10px;display:inline-flex;align-items:center;gap:6px;transition:transform 0.2s}
+.read-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(102,126,234,0.3)}
+.read-btn.playing{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;padding:20px;overflow-y:auto}
+.modal.show{display:block}
+.modal-content{background:#fff;max-width:700px;margin:40px auto;padding:40px;border-radius:20px;position:relative}
+.modal-close{position:absolute;top:20px;right:20px;font-size:30px;cursor:pointer;color:#999;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s}
+.modal-close:hover{background:#f5f5f5}
+.settings-section{margin-bottom:25px}
+.settings-section h3{color:#333;margin-bottom:15px;font-size:1.2em}
+.topic-checkboxes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.checkbox-label{display:flex;align-items:center;padding:12px;background:#f8f9fa;border-radius:10px;cursor:pointer;transition:background 0.2s}
+.checkbox-label:hover{background:#e9ecef}
+.checkbox-label input{margin-right:10px;width:18px;height:18px;cursor:pointer}
+.notification-banner{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:#fff;padding:15px 25px;border-radius:15px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between}
+.notification-banner.show{display:flex}
+@media (max-width:600px){
+h1{font-size:2em}
+.controls{flex-direction:column}
+.btn{width:100%}
+}
 </style>
 </head>
 <body>
@@ -33,36 +64,98 @@ h1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background
 <div class="header">
 <h1>📰 My Daily News</h1>
 <p class="subtitle">Your personalized tech & life news digest</p>
-<div>
+<div class="topic-tags">
 <span class="tag">🔥 Breaking News</span>
 <span class="tag">🛂 Immigration & H1B</span>
 <span class="tag">🤖 AI in Sales</span>
 <span class="tag">💻 Tech & AI</span>
 <span class="tag">💼 Consulting</span>
 <span class="tag">🖥️ Microsoft</span>
+<span class="tag">⚡ Silicon Chips</span>
+<span class="tag">🇮🇳 India Economy</span>
+<span class="tag">👶 Parenting</span>
+<span class="tag">💰 Tech Sales</span>
+<span class="tag">⭐ Vedic Astrology</span>
+<span class="tag">🧘 Spirituality</span>
 </div>
 </div>
 
+<div class="notification-banner" id="notifBanner">
+<span>📬 Enable notifications to get your daily digest!</span>
+<button class="btn" onclick="enableNotif()">Enable</button>
+</div>
+
 <div class="controls">
-<button class="btn" onclick="location.reload()">🔄 Refresh News</button>
+<button class="btn" onclick="render()">🔄 Refresh News</button>
+<button class="btn btn-secondary" onclick="openSettings()">⚙️ Settings</button>
+<button class="btn" onclick="share()">📤 Share App</button>
 </div>
 
 <div id="news-container"></div>
 </div>
 
+<div class="modal" id="settingsModal">
+<div class="modal-content">
+<span class="modal-close" onclick="closeSettings()">&times;</span>
+<h2 style="margin-bottom:25px;color:#667eea">⚙️ Settings</h2>
+<div class="settings-section">
+<h3>📚 Your Topics</h3>
+<div class="topic-checkboxes" id="topicCheckboxes"></div>
+</div>
+<div class="settings-section">
+<h3>📊 Articles Per Day</h3>
+<input type="range" min="5" max="20" value="10" id="articleCount" style="width:100%" oninput="document.getElementById('countDisplay').textContent=this.value">
+<p style="color:#666;margin-top:10px">Current: <span id="countDisplay">10</span> articles</p>
+</div>
+<div class="settings-section">
+<h3>🔔 Daily Notification Time</h3>
+<input type="time" id="notifTime" value="08:00" style="padding:10px;border-radius:8px;border:2px solid #e0e0e0;font-size:1em">
+</div>
+<button class="btn" onclick="saveSettings()" style="width:100%;margin-top:20px">💾 Save Settings</button>
+</div>
+</div>
+
 <script>
-const news = [
-{category:'Breaking News',title:'Microsoft Acquires AI Startup for $10 Billion',description:'Microsoft announced a major AI infrastructure acquisition, marking one of the largest AI deals of 2025.',summary:'Microsoft is acquiring an AI infrastructure startup for $10 billion to strengthen its enterprise AI position. The deal includes GPU optimization technology and 500+ AI researchers. Expected to close Q3 2025 pending regulatory approval.',url:'https://techcrunch.com'},
-{category:'Immigration & H1B',title:'USCIS Announces New H1B Lottery System Changes',description:'Major reforms to H1B visa lottery including beneficiary-centric selection.',summary:'USCIS implementing one-person-one-registration rule to prevent duplicate entries. Starting April 2026, system selects unique beneficiaries rather than petitions. Tech workers should work with single employers for best chances.',url:'https://uscis.gov'},
-{category:'AI in Sales',title:'AI Sales Agents Generate $2M in Pipeline',description:'AI-powered SDRs booking 40% more meetings than human reps.',summary:'Mid-market SaaS company deployed AI agents that analyzed 50,000 prospects and booked 320 qualified meetings in 90 days. Response rates jumped from 2% to 6.8%. Invested $15K but saved $180K in SDR salaries.',url:'https://saastr.com'},
-{category:'Tech & AI',title:'OpenAI Announces GPT-5 with Enhanced Reasoning',description:'Latest AI model promises breakthrough improvements in reasoning and problem solving.',summary:'GPT-5 demonstrates PhD-level reasoning on complex problems. Features improved memory, reduced hallucinations, and maintains context across 1 million tokens. Pricing expected at $50-100 per million tokens.',url:'https://openai.com'},
-{category:'Microsoft & Software',title:'Microsoft Copilot Now Available Across All Office 365',description:'AI assistant expanding to all subscription tiers with new pricing.',summary:'Microsoft bundling Copilot into all Office 365 plans at no extra cost for basic features. Premium capabilities $20/user/month. Makes AI available to 400+ million Office users. Early adopters report 30% time savings.',url:'https://microsoft.com'},
-{category:'India Economy',title:"India's Digital Economy to Reach $1 Trillion by 2026",description:'Explosive growth in digital payments, e-commerce, and tech startups.',summary:"India's digital economy projected to hit $1 trillion by 2026. UPI processing 12 billion transactions monthly. Digital payments grew 59% year-over-year. India has world's third-largest startup ecosystem with 800+ million internet users.",url:'https://economictimes.com'}
+const TOPICS=[
+{id:'breaking',name:'Breaking News',enabled:true},
+{id:'immigration',name:'Immigration & H1B',enabled:true},
+{id:'ai-sales',name:'AI in Sales',enabled:true},
+{id:'tech-ai',name:'Tech & AI',enabled:true},
+{id:'consulting',name:'Outsourcing & Consulting',enabled:true},
+{id:'microsoft',name:'Microsoft & Software',enabled:true},
+{id:'chips',name:'Silicon Chips',enabled:true},
+{id:'india',name:'India Economy',enabled:true},
+{id:'parenting',name:'Parenting (Infant & 1st Grade)',enabled:true},
+{id:'sales',name:'Tech Sales',enabled:true},
+{id:'astrology',name:'Vedic Astrology',enabled:true},
+{id:'spirituality',name:'Art of Living & Meditation',enabled:true}
 ];
 
+const NEWS=[
+{category:'Breaking News',title:'Microsoft Acquires AI Startup for $10 Billion',description:'Microsoft announced a major AI infrastructure acquisition.',summary:'Microsoft is acquiring an AI infrastructure startup for $10 billion to strengthen its enterprise AI position. The deal includes GPU optimization technology and 500+ AI researchers. Expected to close Q3 2025 pending regulatory approval.',url:'https://bloomberg.com'},
+{category:'Immigration & H1B',title:'USCIS Announces New H1B Lottery System Changes',description:'Major reforms to H1B visa lottery including beneficiary-centric selection.',summary:'USCIS implementing one-person-one-registration rule to prevent duplicate entries. Starting April 2026, system selects unique beneficiaries rather than petitions. Tech workers should work with single employers for best chances.',url:'https://immigrationvoice.org'},
+{category:'AI in Sales',title:'AI Sales Agents Generate $2M in Pipeline',description:'AI-powered SDRs booking 40% more meetings.',summary:'Mid-market SaaS company deployed AI agents that analyzed 50,000 prospects and booked 320 qualified meetings in 90 days. Response rates jumped from 2% to 6.8%. Invested $15K but saved $180K in SDR salaries.',url:'https://saastr.com'},
+{category:'Breaking News',title:'Federal Reserve Holds Interest Rates Steady',description:'Fed maintains rates while signaling potential cuts.',summary:'The Fed kept interest rates at 4.25-4.5% but indicated 2-3 rate cuts may come in late 2025 if inflation continues cooling. Mortgage rates could drop to 5.5-6% by year-end.',url:'https://cnbc.com'},
+{category:'Tech & AI',title:'OpenAI Announces GPT-5 with Enhanced Reasoning',description:'Latest AI model promises breakthrough improvements.',summary:'GPT-5 demonstrates PhD-level reasoning, solving advanced mathematics. Features improved memory and maintains context across 1 million tokens. Pricing expected at $50-100 per million tokens.',url:'https://techcrunch.com'},
+{category:'Microsoft & Software',title:'Microsoft Copilot Available Across All Office 365',description:'AI assistant expanding to all tiers.',summary:'Microsoft bundling Copilot into all Office 365 plans at no extra cost for basic features. Premium capabilities cost $20/user/month. Early adopters report 30% time savings.',url:'https://theverge.com'},
+{category:'Silicon Chips',title:'TSMC Begins Production of 2nm Chips',description:'Setting new industry standard.',summary:'TSMC 2nm process enables 15% performance boost and 30% power efficiency improvement. Apple will be first customer for 2026 iPhone and Mac chips. Intel and Samsung trail by 12-18 months.',url:'https://reuters.com'},
+{category:'Immigration & H1B',title:'Green Card Backlog Relief Bill Proposed',description:'Bipartisan legislation aims to eliminate per-country caps.',summary:'The Equal Access Act would eliminate 7% per-country cap, addressing massive backlog. Current wait times exceed 50 years for some Indian EB-2/EB-3 applicants.',url:'https://thehill.com'},
+{category:'AI in Sales',title:'Top Sales Leaders Adopt AI for Email Personalization',description:'78% of high-performing teams use AI.',summary:'Sales teams using AI personalization analyze LinkedIn, company news, and tech stacks for hyper-relevant emails. Response rates average 18-22% with AI versus 5-8% with templates.',url:'https://salesinsights.com'},
+{category:'India Economy',title:'India Digital Economy to Reach $1 Trillion by 2026',description:'Explosive growth in digital payments and startups.',summary:'India digital economy projected to hit $1 trillion. UPI processing 12 billion transactions monthly. Digital payments grew 59% year-over-year with 800+ million internet users.',url:'https://economictimes.com'},
+{category:'Parenting',title:'Play-Based Learning Benefits for First Graders',description:'40% improvement in problem-solving skills.',summary:'5-year study of 1,200 first graders found play-based learning significantly outperforms direct instruction in critical thinking and creativity. Children scored 40% higher on problem-solving tests.',url:'https://parents.com'},
+{category:'Tech Sales',title:'5 Sales Strategies That Drive B2B SaaS Growth',description:'Proven tactics for shortening sales cycles.',summary:'Top SaaS companies combine product-led growth with sales-assist models. Average sales cycles shrinking from 90 to 45 days. Companies report 30% higher win rates and 2x expansion revenue.',url:'https://saleshacker.com'}
+];
+
+let currentSpeech=null;
+let currentIndex=-1;
+
 function render(){
-const container = document.getElementById('news-container');
-container.innerHTML = news.map((n,i) => `
+const container=document.getElementById('news-container');
+const settings=getSettings();
+const enabled=TOPICS.filter(t=>t.enabled).map(t=>t.name);
+const filtered=NEWS.filter(n=>enabled.includes(n.category)).slice(0,settings.count||10);
+
+container.innerHTML=filtered.map((n,i)=>`
 <div class="news-card" onclick="window.open('${n.url}','_blank')">
 <div class="news-category">${n.category}</div>
 <h3 class="news-title">${n.title}</h3>
@@ -70,23 +163,146 @@ container.innerHTML = news.map((n,i) => `
 <div class="news-summary">
 <div class="summary-header">⚡ 30-Second Summary</div>
 <div>${n.summary}</div>
-<button class="read-btn" onclick="event.stopPropagation();speak(${i})">🔊 Read Aloud</button>
+<button class="read-btn" id="btn-${i}" onclick="event.stopPropagation();toggleSpeak(${i},'${n.title.replace(/'/g,'')}','${n.summary.replace(/'/g,'')}')">
+<span id="icon-${i}">🔊</span> <span id="label-${i}">Read Aloud</span>
+</button>
 </div>
 <div class="news-meta">
-<span>📰 Source</span>
+<span>📰 ${n.category}</span>
 <span>🕒 2 hours ago</span>
 </div>
 </div>
 `).join('');
 }
 
-function speak(i){
-const text = news[i].title + '. ' + news[i].summary;
-const speech = new SpeechSynthesisUtterance(text);
-speechSynthesis.speak(speech);
+function toggleSpeak(i,title,summary){
+// Stop any currently playing speech
+if(currentSpeech){
+window.speechSynthesis.cancel();
+// Reset previous button
+if(currentIndex>=0){
+const prevBtn=document.getElementById(`btn-${currentIndex}`);
+const prevIcon=document.getElementById(`icon-${currentIndex}`);
+const prevLabel=document.getElementById(`label-${currentIndex}`);
+if(prevBtn)prevBtn.classList.remove('playing');
+if(prevIcon)prevIcon.textContent='🔊';
+if(prevLabel)prevLabel.textContent='Read Aloud';
+}
+currentSpeech=null;
+currentIndex=-1;
+// If clicking same button, just stop
+if(i===currentIndex)return;
 }
 
+// Start new speech
+const text=title+'. '+summary;
+const speech=new SpeechSynthesisUtterance(text);
+speech.rate=1.0;
+speech.pitch=1.0;
+speech.volume=1.0;
+
+// Update UI
+const btn=document.getElementById(`btn-${i}`);
+const icon=document.getElementById(`icon-${i}`);
+const label=document.getElementById(`label-${i}`);
+btn.classList.add('playing');
+icon.textContent='⏸️';
+label.textContent='Stop';
+
+// Reset UI when done
+speech.onend=()=>{
+btn.classList.remove('playing');
+icon.textContent='🔊';
+label.textContent='Read Aloud';
+currentSpeech=null;
+currentIndex=-1;
+};
+
+window.speechSynthesis.speak(speech);
+currentSpeech=speech;
+currentIndex=i;
+}
+
+function getSettings(){
+const saved=localStorage.getItem('newsSettings');
+if(saved){
+const s=JSON.parse(saved);
+if(s.topics){
+s.topics.forEach((t,i)=>{if(i<TOPICS.length)TOPICS[i].enabled=t.enabled});
+}
+return s;
+}
+return{count:10,time:'08:00'};
+}
+
+function openSettings(){
+document.getElementById('settingsModal').classList.add('show');
+setupCheckboxes();
+const s=getSettings();
+document.getElementById('articleCount').value=s.count||10;
+document.getElementById('countDisplay').textContent=s.count||10;
+document.getElementById('notifTime').value=s.time||'08:00';
+}
+
+function closeSettings(){
+document.getElementById('settingsModal').classList.remove('show');
+}
+
+function setupCheckboxes(){
+const container=document.getElementById('topicCheckboxes');
+container.innerHTML=TOPICS.map(t=>`
+<label class="checkbox-label">
+<input type="checkbox" id="topic-${t.id}" ${t.enabled?'checked':''}>
+${t.name}
+</label>
+`).join('');
+}
+
+function saveSettings(){
+TOPICS.forEach(t=>{
+const cb=document.getElementById(`topic-${t.id}`);
+if(cb)t.enabled=cb.checked;
+});
+const settings={
+topics:TOPICS,
+count:parseInt(document.getElementById('articleCount').value),
+time:document.getElementById('notifTime').value
+};
+localStorage.setItem('newsSettings',JSON.stringify(settings));
+closeSettings();
 render();
+alert('✅ Settings saved!');
+}
+
+function enableNotif(){
+if('Notification' in window){
+Notification.requestPermission().then(p=>{
+if(p==='granted'){
+document.getElementById('notifBanner').classList.remove('show');
+new Notification('🎉 Notifications Enabled!',{body:'You\'ll receive your daily news digest!'});
+}
+});
+}
+}
+
+function share(){
+if(navigator.share){
+navigator.share({title:'My Daily News',text:'Check out my personalized news app!',url:window.location.href});
+}else{
+alert('📋 Share this URL: '+window.location.href);
+}
+}
+
+// Initialize
+function init(){
+getSettings();
+render();
+if('Notification' in window&&Notification.permission==='default'){
+document.getElementById('notifBanner').classList.add('show');
+}
+}
+
+init();
 </script>
 </body>
 </html>
