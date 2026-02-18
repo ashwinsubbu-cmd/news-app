@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Daily News</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .tag:nth-child(2) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .tag:nth-child(3) { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .tag:nth-child(4) { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+        .tag:nth-child(5) { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .tag:nth-child(6) { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .tag:nth-child(7) { background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%); }
+        .tag:nth-child(8) { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); }
+        .tag:nth-child(9) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+
+        .news-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .news-category {
+            display: inline-block;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #667eea;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .news-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .news-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .news-summary {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-left: 3px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .summary-text {
+            color: #444;
+        }
+
+        .read-aloud-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .read-aloud-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .read-aloud-btn.playing {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .read-aloud-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .read-aloud-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .read-aloud-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .read-aloud-btn.playing {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .read-aloud-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .news-source {
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f5f5f5;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+        }
+
+        .settings-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .topic-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-label:hover {
+            background: #e9ecef;
+        }
+
+        .checkbox-label input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .notification-banner {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notification-banner.show {
+            display: flex;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            .controls { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📰 My Daily News</h1>
+            <p class="subtitle">Your personalized tech & life news digest</p>
+            <div class="topic-tags">
+                <span class="tag">🔥 Breaking News</span>
+                <span class="tag">🛂 Immigration & H1B</span>
+                <span class="tag">🤖 AI in Sales</span>
+                <span class="tag">💻 Tech & AI</span>
+                <span class="tag">💼 Consulting</span>
+                <span class="tag">🖥️ Microsoft</span>
+                <span class="tag">⚡ Silicon Chips</span>
+                <span class="tag">🇮🇳 India Economy</span>
+                <span class="tag">👶 Parenting</span>
+                <span class="tag">💰 Tech Sales</span>
+                <span class="tag">⭐ Vedic Astrology</span>
+                <span class="tag">🧘 Spirituality</span>
+            </div>
+        </div>
+
+        <div class="notification-banner" id="notificationBanner">
+            <span>📬 Enable notifications to get your daily digest!</span>
+            <button class="btn" onclick="enableNotifications()">Enable</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="refreshNews()">🔄 Refresh News</button>
+            <button class="btn btn-secondary" onclick="openSettings()">⚙️ Settings</button>
+            <button class="btn" onclick="shareApp()">📤 Share App</button>
+        </div>
+
+        <div id="newsContainer" class="news-grid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading your personalized news...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeSettings()">&times;</span>
+            <h2 style="margin-bottom: 25px; color: #667eea;">⚙️ Settings</h2>
+            
+            <div class="settings-section">
+                <h3>📚 Your Topics</h3>
+                <div class="topic-checkboxes" id="topicCheckboxes"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3>📊 Articles Per Day</h3>
+                <input type="range" min="5" max="20" value="10" id="articleCount" 
+                       style="width: 100%;" oninput="updateArticleCount(this.value)">
+                <p style="color: #666; margin-top: 10px;">Current: <span id="articleCountDisplay">10</span> articles</p>
+            </div>
+
+            <div class="settings-section">
+                <h3>🔔 Daily Notification Time</h3>
+                <input type="time" id="notificationTime" value="08:00" 
+                       style="padding: 10px; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1em;">
+            </div>
+
+            <button class="btn" onclick="saveSettings()" style="width: 100%; margin-top: 20px;">
+                💾 Save Settings
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Topics configuration
+        const TOPICS = [
+            { id: 'breaking', name: 'Breaking News', keywords: ['breaking news', 'trending', 'top news', 'latest news', 'developing story'], enabled: true, feeds: ['https://news.google.com/rss/search?q=breaking+news&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'immigration', name: 'Immigration & H1B', keywords: ['immigration', 'H1B', 'visa', 'green card', 'USCIS', 'work permit'], enabled: true, feeds: ['https://news.google.com/rss/search?q=H1B+visa+immigration&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'ai-sales', name: 'AI in Sales', keywords: ['AI sales', 'sales automation', 'AI SDR', 'sales AI tools', 'predictive sales'], enabled: true, feeds: ['https://news.google.com/rss/search?q=AI+sales+automation&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'tech-ai', name: 'Tech & AI', keywords: ['artificial intelligence', 'AI', 'machine learning', 'technology'], enabled: true, feeds: ['https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB'] },
+            { id: 'consulting', name: 'Outsourcing & Consulting', keywords: ['outsourcing', 'consulting', 'BPO', 'IT services'], enabled: true, feeds: ['https://news.google.com/rss/search?q=IT+consulting+outsourcing&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'microsoft', name: 'Microsoft & Software', keywords: ['microsoft', 'software companies', 'enterprise software', 'cloud computing'], enabled: true, feeds: ['https://news.google.com/rss/search?q=Microsoft+software&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'chips', name: 'Silicon Chips', keywords: ['semiconductor', 'chips', 'TSMC', 'Intel', 'NVIDIA'], enabled: true, feeds: ['https://news.google.com/rss/search?q=semiconductor+chips+TSMC&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'india', name: 'India Economy', keywords: ['india economy', 'indian market', 'rupee', 'indian business'], enabled: true, feeds: ['https://news.google.com/rss/search?q=India+economy&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'parenting', name: 'Parenting (Infant & 1st Grade)', keywords: ['parenting', 'toddler', 'first grade', 'child development', 'early education'], enabled: true, feeds: ['https://news.google.com/rss/search?q=parenting+first+grade+toddler&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'sales', name: 'Tech Sales', keywords: ['tech sales', 'SaaS sales', 'B2B sales', 'sales strategy'], enabled: true, feeds: ['https://news.google.com/rss/search?q=tech+sales+SaaS&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'astrology', name: 'Vedic Astrology', keywords: ['vedic astrology', 'jyotish', 'astrology', 'horoscope'], enabled: true, feeds: ['https://news.google.com/rss/search?q=vedic+astrology&hl=en-US&gl=US&ceid=US:en'] },
+            { id: 'spirituality', name: 'Art of Living & Meditation', keywords: ['art of living', 'meditation', 'mindfulness', 'spirituality', 'yoga'], enabled: true, feeds: ['https://news.google.com/rss/search?q=meditation+mindfulness+art+of+living&hl=en-US&gl=US&ceid=US:en'] }
+        ];
+
+        // RSS to JSON API endpoint (free service)
+        const RSS_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+        
+        // Fetch live news from RSS feeds
+        async function fetchLiveNews() {
+            const allNews = [];
+            const enabledTopics = TOPICS.filter(t => t.enabled);
+            
+            for (const topic of enabledTopics) {
+                try {
+                    const feedUrl = topic.feeds[0];
+                    const response = await fetch(RSS_API + encodeURIComponent(feedUrl));
+                    const data = await response.json();
+                    
+                    if (data.status === 'ok' && data.items) {
+                        const articles = data.items.slice(0, 2).map(item => ({
+                            category: topic.name,
+                            title: item.title,
+                            description: item.description.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
+                            summary: generateQuickSummary(item.description),
+                            source: item.author || data.feed.title || 'News',
+                            time: getTimeAgo(new Date(item.pubDate)),
+                            url: item.link
+                        }));
+                        allNews.push(...articles);
+                    }
+                } catch (error) {
+                    console.log(`Could not fetch ${topic.name} news:`, error);
+                }
+            }
+            
+            return allNews.length > 0 ? allNews : sampleNews;
+        }
+
+        // Generate a quick summary from description
+        function generateQuickSummary(description) {
+            const clean = description.replace(/<[^>]*>/g, '').substring(0, 300);
+            return clean + '... [Click to read full article for complete details]';
+        }
+
+        // Calculate time ago
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            return `${Math.floor(seconds / 86400)} days ago`;
+        }
+
+        // Sample news data (in production, this would come from APIs)
+        const sampleNews = [
+            {
+                category: 'Breaking News',
+                title: 'Major Tech Merger Announced: Microsoft to Acquire AI Startup for $10 Billion',
+                description: 'In a surprise move that is shaking up the tech industry, Microsoft announced its intention to acquire a leading AI infrastructure company, marking one of the largest AI deals of 2025.',
+                summary: 'Microsoft is acquiring an AI infrastructure startup for $10 billion to strengthen its position in enterprise AI. The deal includes cutting-edge GPU optimization technology and a team of 500+ AI researchers. This follows Microsoft\'s aggressive AI strategy after its OpenAI partnership. The acquisition is expected to close in Q3 2025, pending regulatory approval. Industry analysts see this as Microsoft\'s move to compete with Google and Amazon in the AI infrastructure race.',
+                source: 'Bloomberg',
+                time: '30 minutes ago',
+                url: 'https://bloomberg.com'
+            },
+            {
+                category: 'Immigration & H1B',
+                title: 'USCIS Announces New H1B Lottery System Changes for 2026',
+                description: 'The US Citizenship and Immigration Services unveils major reforms to the H1B visa lottery process, including beneficiary-centric selection and enhanced fraud prevention measures affecting tech workers.',
+                summary: 'USCIS is implementing a one-person-one-registration rule to prevent duplicate entries and gaming of the H1B lottery system. Starting April 2026, the system will select unique beneficiaries rather than petitions, significantly reducing chances for those with multiple employer filings. The change aims to give all applicants a fair shot and is expected to impact consulting companies that file multiple petitions. Tech workers should prepare applications early and work with single employers for best chances.',
+                source: 'Immigration Voice',
+                time: '1 hour ago',
+                url: 'https://immigrationvoice.org'
+            },
+            {
+                category: 'AI in Sales',
+                title: 'AI Sales Agents Generate $2M in Pipeline for Enterprise SaaS Company',
+                description: 'New case study reveals how AI-powered SDRs are booking 40% more qualified meetings than human reps, with personalization at scale transforming B2B sales workflows.',
+                summary: 'A mid-market SaaS company deployed AI sales agents that analyzed 50,000 prospects, personalized outreach based on company signals, and booked 320 qualified meetings in 90 days. The AI handles initial prospecting, email sequences, and meeting scheduling while human AEs close deals. Response rates jumped from 2% to 6.8% compared to traditional SDR methods. The company invested $15K in AI tools but saved $180K in SDR salaries while improving meeting quality scores by 35%.',
+                source: 'SaaStr',
+                time: '2 hours ago',
+                url: 'https://saastr.com'
+            },
+            {
+                category: 'Breaking News',
+                title: 'Federal Reserve Holds Interest Rates Steady, Signals Potential Cuts',
+                description: 'The Federal Reserve maintains current interest rates while hinting at possible reductions later this year, impacting markets, mortgages, and the broader economy.',
+                summary: 'The Fed kept interest rates at 4.25-4.5% but indicated 2-3 rate cuts may come in late 2025 if inflation continues cooling. Chair Powell cited moderating inflation (now at 2.4% annual) and stable employment as reasons for optimism. Mortgage rates could drop to 5.5-6% by year-end if cuts materialize. Stock markets rallied 2% on the news. Economists warn the Fed is walking a tightrope between controlling inflation and avoiding recession.',
+                source: 'CNBC',
+                time: '3 hours ago',
+                url: 'https://cnbc.com'
+            },
+            {
+                category: 'Tech & AI',
+                title: 'OpenAI Announces GPT-5 with Enhanced Reasoning Capabilities',
+                description: 'The latest AI model from OpenAI promises breakthrough improvements in logical reasoning, multi-step problem solving, and context understanding, marking a significant leap in artificial intelligence development.',
+                summary: 'GPT-5 demonstrates PhD-level reasoning on complex problems, solving advanced mathematics and coding challenges that stumped GPT-4. The model features improved memory, reduced hallucinations, and better multi-step planning. It can maintain context across 1 million tokens (about 750,000 words). Early testers report 40% improvement in accuracy for scientific research tasks. OpenAI will initially limit access to enterprise customers before broader rollout. Pricing expected at $50-100 per million tokens.',
+                source: 'TechCrunch',
+                time: '2 hours ago',
+                url: 'https://techcrunch.com'
+            },
+            {
+                category: 'Microsoft & Software',
+                title: 'Microsoft Copilot Now Available Across All Office 365 Plans',
+                description: 'Microsoft expands AI assistant availability to all subscription tiers, bringing intelligent productivity tools to millions more users worldwide with new pricing options.',
+                summary: 'Microsoft is democratizing AI access by bundling Copilot into all Office 365 plans at no extra cost for basic features. Premium Copilot capabilities (advanced data analysis, custom GPTs) will cost $20/user/month. The move makes AI writing, Excel formulas, PowerPoint design, and email drafting available to 400+ million Office users. Microsoft aims to compete with Google Workspace AI pricing while building AI dependency into daily workflows. Early adopters report 30% time savings on routine tasks.',
+                source: 'The Verge',
+                time: '4 hours ago',
+                url: 'https://theverge.com'
+            },
+            {
+                category: 'Silicon Chips',
+                title: 'TSMC Begins Production of 2nm Chips, Setting New Industry Standard',
+                description: 'Taiwan Semiconductor Manufacturing Company starts mass production of cutting-edge 2-nanometer chips, promising 15% performance boost and 30% power efficiency improvement.',
+                summary: 'TSMC\'s 2nm process (N2) is the world\'s most advanced chip manufacturing technology, using Gate-All-Around (GAA) transistors for the first time. Apple will be the first customer, likely for 2026 iPhone and Mac chips. The technology enables more transistors in smaller spaces, critical for AI acceleration and mobile devices. Production capacity starts at 30,000 wafers per month, ramping to 100,000 by 2026. Intel and Samsung trail by 12-18 months in comparable technology.',
+                source: 'Reuters',
+                time: '6 hours ago',
+                url: 'https://reuters.com'
+            },
+            {
+                category: 'Immigration & H1B',
+                title: 'Green Card Backlog Relief: New Bill Proposes Per-Country Cap Elimination',
+                description: 'Bipartisan legislation aims to eliminate country-based quotas for employment-based green cards, potentially reducing wait times for Indian and Chinese nationals by decades.',
+                summary: 'The Equal Access to Green Cards Act would eliminate the 7% per-country cap on employment-based green cards, addressing the massive backlog affecting Indian and Chinese workers. Current wait times exceed 50 years for some Indian EB-2/EB-3 applicants. The bill proposes a 9-year phase-in to prevent sudden disruption while clearing the backlog of 1.2 million pending applications. Tech industry leaders strongly support the measure as critical for talent retention. However, previous similar bills have stalled, making passage uncertain despite bipartisan sponsorship.',
+                source: 'The Hill',
+                time: '5 hours ago',
+                url: 'https://thehill.com'
+            },
+            {
+                category: 'AI in Sales',
+                title: 'Top Sales Leaders Adopting AI for Email Personalization at Scale',
+                description: 'Survey reveals 78% of high-performing sales teams now use AI to craft personalized outreach, with response rates increasing by 3x compared to traditional templated emails.',
+                summary: 'Sales teams using AI personalization tools analyze LinkedIn profiles, company news, job postings, and tech stacks to create hyper-relevant emails. Tools like Lavender, Smartlead, and Clay enable reps to personalize 100+ emails daily versus 10-15 manually. The key is AI suggesting unique insights per prospect rather than mail-merge templates. Response rates average 18-22% with AI versus 5-8% with templates. Top performers combine AI research with human editing for authenticity. Cost: $50-200/month per rep, ROI typically 5-10x within 90 days.',
+                source: 'Sales Insights Lab',
+                time: '6 hours ago',
+                url: 'https://salesinsights.com'
+            },
+            {
+                category: 'India Economy',
+                title: 'India\'s Digital Economy Expected to Reach $1 Trillion by 2026',
+                description: 'Government report highlights explosive growth in digital payments, e-commerce, and tech startups, positioning India as a global digital powerhouse.',
+                summary: 'India\'s digital economy is projected to hit $1 trillion by 2026, driven by UPI payments (processing 12 billion transactions monthly), booming e-commerce, and 100,000+ tech startups. Digital payments grew 59% year-over-year, with rural adoption accelerating. The government\'s Digital India initiative, 5G rollout, and startup-friendly policies are key drivers. India now has the world\'s third-largest startup ecosystem. Challenges remain in digital literacy and infrastructure, but momentum is strong with 800+ million internet users.',
+                source: 'Economic Times',
+                time: '3 hours ago',
+                url: 'https://economictimes.com'
+            },
+            {
+                category: 'Parenting',
+                title: 'New Study Shows Benefits of Play-Based Learning for First Graders',
+                description: 'Research demonstrates that children in play-based learning environments show 40% improvement in problem-solving skills and social development compared to traditional methods.',
+                summary: 'A 5-year longitudinal study of 1,200 first graders found that play-based learning significantly outperforms traditional direct instruction in critical thinking, creativity, and emotional regulation. Children in play-based classrooms scored 40% higher on problem-solving tests and showed better conflict resolution skills. The approach emphasizes learning through structured play, hands-on activities, and child-directed exploration. Teachers act as guides rather than lecturers. The findings challenge test-prep focused curricula and support developmentally appropriate practices for 6-7 year-olds.',
+                source: 'Parents Magazine',
+                time: '5 hours ago',
+                url: 'https://parents.com'
+            },
+            {
+                category: 'Outsourcing & Consulting',
+                title: 'Global IT Services Market Projected to Grow 8% in 2025',
+                description: 'Consulting firms see increased demand for digital transformation services, with cloud migration and AI implementation leading growth areas.',
+                summary: 'The global IT services market will reach $1.4 trillion in 2025, growing 8% year-over-year. Key drivers include cloud migration (30% of spending), AI/ML implementation, cybersecurity, and legacy system modernization. Indian IT firms (TCS, Infosys, Wipro) are winning large transformation deals as enterprises accelerate digital initiatives. Consulting rates for AI specialists have jumped 25% to $200-300/hour. The war for tech talent remains fierce, with attrition at 15-20%. Offshore delivery models are evolving with hybrid approaches gaining favor.',
+                source: 'Forbes',
+                time: '7 hours ago',
+                url: 'https://forbes.com'
+            },
+            {
+                category: 'Tech Sales',
+                title: '5 Sales Strategies That Drive B2B SaaS Growth in 2025',
+                description: 'Industry leaders share proven tactics for shortening sales cycles, including product-led growth, value-based selling, and strategic account management.',
+                summary: 'Top SaaS companies are combining product-led growth (PLG) with sales-assist models to optimize conversion. Key strategies: (1) Free trials that showcase core value in 7 days, (2) Value-based pricing aligned to customer outcomes, (3) Champion development programs to create internal advocates, (4) Multi-threading across buying committees, (5) Async demos using Loom for faster cycles. Average SaaS sales cycles are shrinking from 90 to 45 days using these tactics. Companies report 30% higher win rates and 2x expansion revenue.',
+                source: 'Sales Hacker',
+                time: '4 hours ago',
+                url: 'https://saleshacker.com'
+            },
+            {
+                category: 'Vedic Astrology',
+                title: 'Understanding Saturn Transit: What It Means for Your Career',
+                description: 'Vedic astrologers explain the significance of Saturn\'s movement through different houses and its impact on professional life and long-term goals.',
+                summary: 'Saturn (Shani) is transiting Aquarius until March 2025, affecting career houses differently based on your birth chart. Saturn in 10th house brings career recognition through hard work but demands patience. In 6th house, it strengthens competitive position and overcomes obstacles. The 2.5-year Sade Sati period (Saturn transiting 12th, 1st, 2nd houses) requires perseverance but builds character and long-term success. Astrologers recommend Saturday fasting, charity, and mantra meditation to harness Saturn\'s disciplining energy positively. Saturn rewards delayed gratification and systematic effort.',
+                source: 'Astrology Weekly',
+                time: '8 hours ago',
+                url: 'https://astrologyweekly.com'
+            },
+            {
+                category: 'Art of Living & Meditation',
+                title: 'Sudarshan Kriya: The Breathing Technique Reducing Stress by 50%',
+                description: 'New clinical studies validate the powerful effects of this Art of Living meditation practice on mental health, anxiety reduction, and overall wellbeing.',
+                summary: 'Clinical trials with 2,400 participants show Sudarshan Kriya (SKY) breathing reduces cortisol levels by 50% and significantly improves anxiety, depression, and PTSD symptoms. The technique uses cyclical breathing patterns to activate the parasympathetic nervous system. Practitioners report better sleep, reduced reactivity, and improved focus after 3-4 weeks of daily practice. The Art of Living foundation teaches SKY in their signature Happiness Program. Studies show effects comparable to antidepressants but without side effects. Recommended: 20 minutes daily practice for optimal benefits.',
+                source: 'Mindful Magazine',
+                time: '6 hours ago',
+                url: 'https://mindful.org'
+            },
+            {
+                category: 'Tech & AI',
+                title: 'Google DeepMind\'s AI Solves Complex Mathematics Problems',
+                description: 'Breakthrough achievement as AI system successfully tackles graduate-level mathematical reasoning, opening new frontiers in scientific research and discovery.',
+                summary: 'Google DeepMind\'s AlphaProof and AlphaGeometry 2 solved 4 out of 6 problems from the 2024 International Mathematical Olympiad, achieving silver medal level. This represents a quantum leap in AI mathematical reasoning, as these problems require creative insight, not just pattern matching. The system combines neural networks with symbolic reasoning engines. Applications include theorem proving, scientific discovery, and computer-aided design. Mathematicians are both excited and concerned about AI\'s implications for the field. The breakthrough suggests AGI capabilities are advancing faster than expected.',
+                source: 'Nature',
+                time: '9 hours ago',
+                url: 'https://nature.com'
+            }
+        ];
+
+        // Initialize app
+        function init() {
+            loadSettings();
+            renderNews();
+            setupTopicCheckboxes();
+            checkNotificationPermission();
+            
+            // Auto-fetch live news in background
+            setTimeout(() => {
+                refreshNews();
+            }, 2000);
+            
+            // Simulate daily refresh
+            scheduleNotification();
+        }
+
+        function renderNews() {
+            const container = document.getElementById('newsContainer');
+            const settings = getSettings();
+            const enabledTopics = TOPICS.filter(t => t.enabled).map(t => t.name);
+            
+            // Check if we have cached live news
+            const cachedNews = localStorage.getItem('liveNewsCache');
+            const cacheTime = localStorage.getItem('newsCacheTime');
+            const oneHour = 60 * 60 * 1000;
+            
+            if (cachedNews && cacheTime && (Date.now() - parseInt(cacheTime)) < oneHour) {
+                // Use cached news if less than 1 hour old
+                const parsedNews = JSON.parse(cachedNews);
+                displayNews(parsedNews, enabledTopics, settings.articleCount);
+            } else {
+                // Use sample news initially, then fetch live
+                displayNews(sampleNews, enabledTopics, settings.articleCount);
+            }
+        }
+
+        function displayNews(newsArray, enabledTopics, count) {
+            const container = document.getElementById('newsContainer');
+            let newsToShow = newsArray.filter(news => enabledTopics.includes(news.category));
+            newsToShow = newsToShow.slice(0, count);
+
+            container.innerHTML = newsToShow.map((news, index) => `
+                <div class="news-card" onclick="event.target.classList.contains('read-aloud-btn') ? null : openArticle('${news.url}')">
+                    <div class="news-category">${news.category}</div>
+                    <h3 class="news-title">${news.title}</h3>
+                    <p class="news-description">${news.description}</p>
+                    ${news.summary ? `
+                    <div class="news-summary">
+                        <div class="summary-header">⚡ 30-Second Summary</div>
+                        <div class="summary-text" id="summary-${index}">${news.summary}</div>
+                        <button class="read-aloud-btn" id="btn-${index}" onclick="event.stopPropagation(); toggleReadAloud(${index}, \`${news.title.replace(/`/g, '').replace(/\\/g, '\\\\')}\`)">
+                            <span id="icon-${index}">🔊</span> <span id="label-${index}">Read Aloud</span>
+                        </button>
+                    </div>
+                    ` : ''}
+                    <div class="news-meta">
+                        <span class="news-source">📰 ${news.source}</span>
+                        <span>🕒 ${news.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Text-to-Speech functionality
+        let currentSpeech = null;
+
+        function toggleReadAloud(index, title) {
+            const summaryText = document.getElementById(`summary-${index}`).textContent;
+            const button = document.getElementById(`btn-${index}`);
+            const icon = document.getElementById(`icon-${index}`);
+            const label = document.getElementById(`label-${index}`);
+            
+            // Stop if currently playing
+            if (currentSpeech && !currentSpeech.paused) {
+                window.speechSynthesis.cancel();
+                currentSpeech = null;
+                // Reset all buttons
+                document.querySelectorAll('.read-aloud-btn').forEach(btn => {
+                    btn.classList.remove('playing');
+                });
+                document.querySelectorAll('[id^="icon-"]').forEach(ic => ic.textContent = '🔊');
+                document.querySelectorAll('[id^="label-"]').forEach(lb => lb.textContent = 'Read Aloud');
+                return;
+            }
+
+            // Create new speech
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = `${title}. ${summaryText}`;
+            speech.rate = 1.0;
+            speech.pitch = 1.0;
+            speech.volume = 1.0;
+
+            // Update UI
+            button.classList.add('playing');
+            icon.textContent = '⏸️';
+            label.textContent = 'Stop';
+
+            // Reset UI when done
+            speech.onend = () => {
+                button.classList.remove('playing');
+                icon.textContent = '🔊';
+                label.textContent = 'Read Aloud';
+                currentSpeech = null;
+            };
+
+            window.speechSynthesis.speak(speech);
+            currentSpeech = speech;
+        }
+
+        // Fetch live news from NewsAPI
+        async function fetchLiveNews() {
+            // Using NewsAPI.org free tier (100 requests/day)
+            // For production, you'll need to sign up and add your API key
+            const apiKey = 'DEMO_API_KEY'; // Replace with your actual API key from newsapi.org
+            
+            // Build queries for each topic
+            const queries = [
+                { query: 'breaking news', category: 'Breaking News' },
+                { query: 'H1B visa immigration', category: 'Immigration & H1B' },
+                { query: 'AI sales automation', category: 'AI in Sales' },
+                { query: 'artificial intelligence', category: 'Tech & AI' },
+                { query: 'IT consulting outsourcing', category: 'Outsourcing & Consulting' },
+                { query: 'Microsoft software', category: 'Microsoft & Software' },
+                { query: 'semiconductor chips TSMC', category: 'Silicon Chips' },
+                { query: 'India economy', category: 'India Economy' },
+                { query: 'parenting children education', category: 'Parenting' },
+                { query: 'B2B SaaS sales', category: 'Tech Sales' }
+            ];
+
+            try {
+                // For demo purposes, we'll show how to integrate
+                // Uncomment below when you have a real API key
+                
+                /*
+                const allNews = [];
+                for (const {query, category} of queries) {
+                    const response = await fetch(
+                        `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=2&apiKey=${apiKey}`
+                    );
+                    const data = await response.json();
+                    
+                    if (data.articles) {
+                        data.articles.forEach(article => {
+                            allNews.push({
+                                category: category,
+                                title: article.title,
+                                description: article.description || article.content?.substring(0, 200) + '...',
+                                summary: generateSummary(article),
+                                source: article.source.name,
+                                time: getTimeAgo(article.publishedAt),
+                                url: article.url
+                            });
+                        });
+                    }
+                }
+                
+                // Cache the results
+                localStorage.setItem('liveNewsCache', JSON.stringify(allNews));
+                localStorage.setItem('newsCacheTime', Date.now().toString());
+                
+                return allNews;
+                */
+                
+                // For now, return sample news with a note
+                console.log('Live news integration ready - add your NewsAPI key to enable');
+                return null;
+                
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                return null;
+            }
+        }
+
+        function getTimeAgo(publishedAt) {
+            const now = new Date();
+            const published = new Date(publishedAt);
+            const diffMs = now - published;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            
+            if (diffHours < 1) return 'Just now';
+            if (diffHours === 1) return '1 hour ago';
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays === 1) return '1 day ago';
+            return `${diffDays} days ago`;
+        }
+                            <span id="text-${index}">Read Aloud</span>
+                        </button>
+                    </div>
+                    ` : ''}
+                    <div class="news-meta">
+                        <span class="news-source">📰 ${news.source}</span>
+                        <span>🕒 ${news.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function refreshNews() {
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Fetching latest news from live sources...</p>
+                </div>
+            `;
+            
+            fetchLiveNews().then(liveNews => {
+                // Cache the news
+                localStorage.setItem('liveNewsCache', JSON.stringify(liveNews));
+                localStorage.setItem('newsCacheTime', Date.now().toString());
+                
+                const settings = getSettings();
+                const enabledTopics = TOPICS.filter(t => t.enabled).map(t => t.name);
+                displayNews(liveNews, enabledTopics, settings.articleCount);
+            }).catch(error => {
+                console.error('Error fetching live news:', error);
+                // Fallback to sample news
+                const settings = getSettings();
+                const enabledTopics = TOPICS.filter(t => t.enabled).map(t => t.name);
+                displayNews(sampleNews, enabledTopics, settings.articleCount);
+            });
+        }
+
+        function openArticle(url) {
+            window.open(url, '_blank');
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function setupTopicCheckboxes() {
+            const container = document.getElementById('topicCheckboxes');
+            container.innerHTML = TOPICS.map(topic => `
+                <label class="checkbox-label">
+                    <input type="checkbox" id="topic-${topic.id}" ${topic.enabled ? 'checked' : ''}>
+                    ${topic.name}
+                </label>
+            `).join('');
+        }
+
+        function updateArticleCount(value) {
+            document.getElementById('articleCountDisplay').textContent = value;
+        }
+
+        function saveSettings() {
+            // Update topic settings
+            TOPICS.forEach(topic => {
+                topic.enabled = document.getElementById(`topic-${topic.id}`).checked;
+            });
+
+            const settings = {
+                topics: TOPICS,
+                articleCount: parseInt(document.getElementById('articleCount').value),
+                notificationTime: document.getElementById('notificationTime').value
+            };
+
+            localStorage.setItem('newsAppSettings', JSON.stringify(settings));
+            
+            closeSettings();
+            renderNews();
+            
+            alert('✅ Settings saved successfully!');
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('newsAppSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                if (settings.topics) {
+                    settings.topics.forEach((savedTopic, index) => {
+                        TOPICS[index].enabled = savedTopic.enabled;
+                    });
+                }
+                if (settings.articleCount) {
+                    document.getElementById('articleCount').value = settings.articleCount;
+                    document.getElementById('articleCountDisplay').textContent = settings.articleCount;
+                }
+                if (settings.notificationTime) {
+                    document.getElementById('notificationTime').value = settings.notificationTime;
+                }
+            }
+        }
+
+        function getSettings() {
+            const saved = localStorage.getItem('newsAppSettings');
+            return saved ? JSON.parse(saved) : {
+                topics: TOPICS,
+                articleCount: 10,
+                notificationTime: '08:00'
+            };
+        }
+
+        function checkNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                document.getElementById('notificationBanner').classList.add('show');
+            }
+        }
+
+        function enableNotifications() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        document.getElementById('notificationBanner').classList.remove('show');
+                        new Notification('🎉 Notifications Enabled!', {
+                            body: 'You\'ll receive your daily news digest every day!',
+                            icon: '📰'
+                        });
+                    }
+                });
+            }
+        }
+
+        function scheduleNotification() {
+            // Check every hour if it's time to notify
+            setInterval(() => {
+                const settings = getSettings();
+                const now = new Date();
+                const notifTime = settings.notificationTime.split(':');
+                
+                if (now.getHours() === parseInt(notifTime[0]) && now.getMinutes() === parseInt(notifTime[1])) {
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('📰 Your Daily News is Ready!', {
+                            body: `${settings.articleCount} fresh articles waiting for you`,
+                            icon: '📰'
+                        });
+                    }
+                }
+            }, 60000); // Check every minute
+        }
+
+        function shareApp() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Daily News App',
+                    text: 'Check out my personalized news app!',
+                    url: window.location.href
+                });
+            } else {
+                alert('📋 Copy this URL to share: ' + window.location.href);
+            }
+        }
+
+        // Initialize on load
+        window.onload = init;
+
+        // Text-to-Speech functionality
+        let currentSpeech = null;
+        let currentIndex = null;
+
+        function toggleReadAloud(index, title) {
+            const summaryText = document.getElementById(`summary-${index}`).textContent;
+            const button = event.currentTarget;
+            const icon = document.getElementById(`icon-${index}`);
+            const text = document.getElementById(`text-${index}`);
+
+            // Stop current speech if playing
+            if (currentSpeech && currentIndex === index) {
+                window.speechSynthesis.cancel();
+                currentSpeech = null;
+                currentIndex = null;
+                button.classList.remove('playing');
+                icon.textContent = '🔊';
+                text.textContent = 'Read Aloud';
+                return;
+            }
+
+            // Stop any other playing speech
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+                const prevButton = document.querySelector('.read-aloud-btn.playing');
+                if (prevButton) {
+                    prevButton.classList.remove('playing');
+                    const prevIcon = prevButton.querySelector('span:first-child');
+                    const prevText = prevButton.querySelector('span:last-child');
+                    if (prevIcon) prevIcon.textContent = '🔊';
+                    if (prevText) prevText.textContent = 'Read Aloud';
+                }
+            }
+
+            // Create and play new speech
+            const utterance = new SpeechSynthesisUtterance();
+            utterance.text = `${title}. ${summaryText}`;
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            // Update UI to playing state
+            button.classList.add('playing');
+            icon.textContent = '⏸️';
+            text.textContent = 'Pause';
+            currentSpeech = utterance;
+            currentIndex = index;
+
+            // Handle speech end
+            utterance.onend = () => {
+                button.classList.remove('playing');
+                icon.textContent = '🔊';
+                text.textContent = 'Read Aloud';
+                currentSpeech = null;
+                currentIndex = null;
+            };
+
+            // Handle errors
+            utterance.onerror = (error) => {
+                console.error('Speech synthesis error:', error);
+                button.classList.remove('playing');
+                icon.textContent = '🔊';
+                text.textContent = 'Read Aloud';
+                currentSpeech = null;
+                currentIndex = null;
+            };
+
+            // Start speaking
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Stop speech when navigating away
+        window.addEventListener('beforeunload', () => {
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+            }
+        });
+    </script>
+</body>
+</html>
