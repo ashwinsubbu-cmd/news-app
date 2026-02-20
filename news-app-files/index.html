@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Daily News</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+.container{max-width:900px;margin:0 auto}
+.header{background:#fff;border-radius:20px;padding:30px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1)}
+h1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2.5em;margin-bottom:10px}
+.subtitle{color:#666;font-size:1.1em;margin-bottom:15px}
+.topic-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.tag{display:inline-block;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:#fff;padding:8px 16px;border-radius:15px;font-size:0.85em;font-weight:600;cursor:pointer;transition:transform 0.2s,opacity 0.2s}
+.tag:hover{transform:translateY(-2px)}
+.tag.inactive{opacity:0.4}
+.tag:nth-child(1){background:linear-gradient(135deg,#FF6B6B 0%,#FFE66D 100%)}
+.tag:nth-child(2){background:linear-gradient(135deg,#4ECDC4 0%,#44A08D 100%)}
+.tag:nth-child(3){background:linear-gradient(135deg,#A8EDEA 0%,#FED6E3 100%);color:#333}
+.tag:nth-child(4){background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.tag:nth-child(5){background:linear-gradient(135deg,#fa709a 0%,#fee140 100%)}
+.tag:nth-child(6){background:linear-gradient(135deg,#30cfd0 0%,#330867 100%)}
+.tag:nth-child(7){background:linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)}
+.tag:nth-child(8){background:linear-gradient(135deg,#e0c3fc 0%,#8ec5fc 100%)}
+.tag:nth-child(9){background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)}
+.tag:nth-child(10){background:linear-gradient(135deg,#ff6e7f 0%,#bfe9ff 100%)}
+.tag:nth-child(11){background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.tag:nth-child(12){background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
+.user-tag{background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);position:relative;padding-right:35px}
+.remove-tag{position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;font-weight:bold;font-size:1.1em}
+.filter-hint{color:#999;font-size:0.85em;margin-top:10px;font-style:italic}
+.controls{background:#fff;border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);display:flex;gap:10px;flex-wrap:wrap}
+.btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1em;font-weight:600;transition:transform 0.2s,box-shadow 0.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,0.4)}
+.btn-secondary{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.btn-custom{background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%)}
+.notification-banner{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:#fff;padding:15px 25px;border-radius:15px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between}
+.notification-banner.show{display:flex}
+.news-card{background:#fff;border-radius:15px;padding:30px;margin-bottom:25px;box-shadow:0 10px 40px rgba(0,0,0,0.1);transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden}
+.news-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.news-card:hover{transform:translateY(-5px);box-shadow:0 15px 50px rgba(0,0,0,0.15)}
+.news-category{font-size:0.75em;font-weight:700;text-transform:uppercase;color:#667eea;margin-bottom:10px;letter-spacing:1px}
+.news-title{font-size:1.5em;font-weight:700;color:#333;margin-bottom:15px;line-height:1.4}
+.news-description{color:#666;line-height:1.7;margin-bottom:15px;font-size:1.05em}
+.news-summary{background:linear-gradient(135deg,#f5f7fa 0%,#e8eaf6 100%);border-left:4px solid #667eea;padding:20px;border-radius:10px;margin-top:20px;font-size:1em;line-height:1.8}
+.summary-header{display:flex;align-items:center;gap:8px;font-weight:700;color:#667eea;margin-bottom:12px;font-size:1em}
+.summary-text{color:#444}
+.read-time{font-size:0.85em;color:#999;margin-top:8px;font-style:italic}
+.news-meta{display:flex;justify-content:space-between;align-items:center;color:#999;font-size:0.9em;margin-top:20px;padding-top:20px;border-top:2px solid #f0f0f0;flex-wrap:wrap;gap:10px}
+.news-source{font-weight:600;color:#667eea}
+.article-link{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:10px 20px;border-radius:20px;text-decoration:none;font-size:0.9em;font-weight:600;transition:transform 0.2s;margin-top:15px}
+.article-link:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(102,126,234,0.4)}
+.read-btn{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%);color:#fff;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;font-size:0.9em;font-weight:600;margin-top:15px;display:inline-flex;align-items:center;gap:8px;transition:transform 0.2s}
+.read-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(67,233,123,0.4)}
+.read-btn.playing{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+.loading{text-align:center;padding:60px 20px;background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1)}
+.spinner{width:50px;height:50px;border:5px solid #f3f3f3;border-top:5px solid #667eea;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;padding:20px;overflow-y:auto}
+.modal.show{display:block}
+.modal-content{background:#fff;max-width:700px;margin:40px auto;padding:40px;border-radius:20px;position:relative}
+.modal-close{position:absolute;top:20px;right:20px;font-size:30px;cursor:pointer;color:#999;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s}
+.modal-close:hover{background:#f5f5f5}
+.settings-section{margin-bottom:30px}
+.settings-section h3{color:#333;margin-bottom:15px;font-size:1.2em}
+.keyword-input-container{display:flex;gap:10px;margin-bottom:15px}
+.keyword-input{flex:1;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:1em}
+.keyword-input:focus{outline:none;border-color:#667eea}
+.add-keyword-btn{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%);color:#fff;border:none;padding:12px 24px;border-radius:10px;cursor:pointer;font-weight:600;transition:transform 0.2s}
+.add-keyword-btn:hover{transform:translateY(-2px)}
+.keyword-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;padding:15px;background:#f8f9fa;border-radius:10px;min-height:60px}
+.keyword-chip{background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);color:#fff;padding:8px 16px;border-radius:20px;font-size:0.9em;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:transform 0.2s}
+.keyword-chip:hover{transform:translateY(-2px)}
+.remove-keyword{cursor:pointer;font-weight:bold;font-size:1.1em}
+.empty-keywords{color:#999;font-style:italic;padding:10px}
+.keyword-examples{margin-top:10px;padding:15px;background:#fff3cd;border-left:4px solid:#ffc107;border-radius:8px}
+.keyword-examples h4{color:#856404;font-size:0.95em;margin-bottom:8px}
+.keyword-examples ul{margin-left:20px;color:#856404;font-size:0.9em}
+.keyword-examples li{margin-bottom:5px}
+@media (max-width:600px){
+h1{font-size:2em}
+.controls{flex-direction:column}
+.btn{width:100%}
+.news-meta{flex-direction:column;align-items:flex-start}
+.keyword-input-container{flex-direction:column}
+.add-keyword-btn{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>📰 My Daily News</h1>
+<p class="subtitle">Your personalized tech & life news digest - Live Feed</p>
+<div class="topic-tags" id="topicFilters">
+<span class="tag" data-category="all">📋 All News</span>
+<span class="tag" data-category="Breaking News">🔥 Breaking News</span>
+<span class="tag" data-category="Immigration & H1B">🛂 Immigration & H1B</span>
+<span class="tag" data-category="AI in Sales">🤖 AI in Sales</span>
+<span class="tag" data-category="Tech & AI">💻 Tech & AI</span>
+<span class="tag" data-category="Outsourcing & Consulting">💼 Consulting</span>
+<span class="tag" data-category="Microsoft & Software">🖥️ Microsoft</span>
+<span class="tag" data-category="Silicon Chips">⚡ Silicon Chips</span>
+<span class="tag" data-category="India Economy">🇮🇳 India Economy</span>
+<span class="tag" data-category="Parenting">👶 Parenting</span>
+<span class="tag" data-category="Tech Sales">💰 Tech Sales</span>
+<span class="tag" data-category="Vedic Astrology">⭐ Vedic Astrology</span>
+<span class="tag" data-category="Art of Living & Meditation">🧘 Spirituality</span>
+<div id="userKeywordTags"></div>
+</div>
+<p class="filter-hint">💡 Click on any category to filter news • Add your own topics with "Customize Your News"</p>
+</div>
+
+<div class="notification-banner" id="notifBanner">
+<span>📬 Enable daily notifications at 12:00 PM to never miss your news!</span>
+<button class="btn" onclick="enableNotifications()">Enable Notifications</button>
+</div>
+
+<div class="controls">
+<button class="btn" onclick="fetchLiveNews()">🔄 Refresh Live News</button>
+<button class="btn btn-custom" onclick="openCustomize()">✨ Customize Your News</button>
+<button class="btn btn-secondary" onclick="openSettings()">⚙️ Settings</button>
+<button class="btn" onclick="shareApp()">📤 Share App</button>
+</div>
+
+<div id="news-container">
+<div class="loading">
+<div class="spinner"></div>
+<p>Loading latest news from all your topics...</p>
+</div>
+</div>
+</div>
+
+<div class="modal" id="customizeModal">
+<div class="modal-content">
+<span class="modal-close" onclick="closeCustomize()">&times;</span>
+<h2 style="margin-bottom:25px;color:#667eea">✨ Customize Your News</h2>
+
+<div class="settings-section">
+<h3>🔖 Add Your Custom Keywords & Topics</h3>
+<p style="color:#666;margin-bottom:15px;line-height:1.6">
+Add keywords or topics you want to track. We'll fetch personalized news matching your interests!
+</p>
+
+<div class="keyword-input-container">
+<input 
+type="text" 
+id="keywordInput" 
+class="keyword-input" 
+placeholder="e.g., SpaceX, Climate Change, Crypto, React.js..."
+onkeypress="if(event.key==='Enter')addKeyword()"
+>
+<button class="add-keyword-btn" onclick="addKeyword()">+ Add</button>
+</div>
+
+<div class="keyword-list" id="keywordList">
+<span class="empty-keywords">No custom keywords yet. Add some above!</span>
+</div>
+
+<div class="keyword-examples">
+<h4>💡 Example Keywords:</h4>
+<ul>
+<li><strong>Companies:</strong> Tesla, Apple, Amazon, Google, SpaceX</li>
+<li><strong>Technologies:</strong> React, Python, Kubernetes, Blockchain</li>
+<li><strong>Topics:</strong> Climate change, Renewable energy, Remote work</li>
+<li><strong>People:</strong> Elon Musk, Satya Nadella, Jensen Huang</li>
+<li><strong>Locations:</strong> Silicon Valley, Bangalore, Austin</li>
+</ul>
+</div>
+</div>
+
+<button class="btn" onclick="saveCustomKeywords()" style="width:100%;margin-top:20px">
+💾 Save & Fetch Custom News
+</button>
+</div>
+</div>
+
+<div class="modal" id="settingsModal">
+<div class="modal-content">
+<span class="modal-close" onclick="closeSettings()">&times;</span>
+<h2 style="margin-bottom:25px;color:#667eea">⚙️ Settings</h2>
+<div class="settings-section">
+<h3>🔔 Daily Notification</h3>
+<p style="color:#666;margin-bottom:10px">Get notified every day at 12:00 PM (noon)</p>
+<button class="btn" onclick="enableNotifications()" style="width:100%">
+📬 Enable Daily Notifications
+</button>
+</div>
+<div class="settings-section">
+<h3>📊 Articles Per Load</h3>
+<input type="range" min="10" max="30" value="20" id="articleCount" style="width:100%" oninput="document.getElementById('countDisplay').textContent=this.value">
+<p style="color:#666;margin-top:10px">Current: <span id="countDisplay">20</span> articles</p>
+</div>
+<div class="settings-section">
+<h3>ℹ️ About</h3>
+<p style="color:#666;line-height:1.6">
+Your personalized news app with real-time updates. Add custom keywords to track exactly what matters to you!
+</p>
+</div>
+<button class="btn" onclick="saveSettings()" style="width:100%;margin-top:20px">💾 Save Settings</button>
+</div>
+</div>
+
+<script>
+let allArticles = [];
+let currentFilter = 'all';
+let currentSpeech = null;
+let currentIndex = -1;
+let userKeywords = [];
+
+// Load user keywords on init
+function loadUserKeywords() {
+    const saved = localStorage.getItem('userKeywords');
+    if (saved) {
+        userKeywords = JSON.parse(saved);
+        renderUserKeywordTags();
+    }
+}
+
+function renderUserKeywordTags() {
+    const container = document.getElementById('userKeywordTags');
+    if (userKeywords.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    container.innerHTML = userKeywords.map(keyword => `
+        <span class="tag user-tag" data-category="${keyword}">
+            🎯 ${keyword}
+            <span class="remove-tag" onclick="event.stopPropagation();removeKeywordTag('${keyword}')">&times;</span>
+        </span>
+    `).join('');
+}
+
+function removeKeywordTag(keyword) {
+    if (confirm(`Remove "${keyword}" from your custom topics?`)) {
+        userKeywords = userKeywords.filter(k => k !== keyword);
+        localStorage.setItem('userKeywords', JSON.stringify(userKeywords));
+        renderUserKeywordTags();
+        fetchLiveNews(); // Refresh to remove those articles
+    }
+}
+
+function openCustomize() {
+    document.getElementById('customizeModal').classList.add('show');
+    renderKeywordList();
+}
+
+function closeCustomize() {
+    document.getElementById('customizeModal').classList.remove('show');
+}
+
+function addKeyword() {
+    const input = document.getElementById('keywordInput');
+    const keyword = input.value.trim();
+    
+    if (!keyword) {
+        alert('Please enter a keyword or topic!');
+        return;
+    }
+    
+    if (userKeywords.includes(keyword)) {
+        alert('This keyword is already added!');
+        return;
+    }
+    
+    if (userKeywords.length >= 10) {
+        alert('Maximum 10 custom keywords allowed. Remove some to add more.');
+        return;
+    }
+    
+    userKeywords.push(keyword);
+    input.value = '';
+    renderKeywordList();
+}
+
+function renderKeywordList() {
+    const container = document.getElementById('keywordList');
+    
+    if (userKeywords.length === 0) {
+        container.innerHTML = '<span class="empty-keywords">No custom keywords yet. Add some above!</span>';
+        return;
+    }
+    
+    container.innerHTML = userKeywords.map(keyword => `
+        <span class="keyword-chip">
+            ${keyword}
+            <span class="remove-keyword" onclick="removeKeyword('${keyword}')">&times;</span>
+        </span>
+    `).join('');
+}
+
+function removeKeyword(keyword) {
+    userKeywords = userKeywords.filter(k => k !== keyword);
+    renderKeywordList();
+}
+
+function saveCustomKeywords() {
+    localStorage.setItem('userKeywords', JSON.stringify(userKeywords));
+    renderUserKeywordTags();
+    closeCustomize();
+    
+    if (userKeywords.length > 0) {
+        alert(`✅ Saved ${userKeywords.length} custom keyword(s)! Fetching personalized news...`);
+        fetchLiveNews();
+    } else {
+        alert('✅ Custom keywords cleared!');
+    }
+}
+
+// Category filter functionality
+document.getElementById('topicFilters').addEventListener('click', (e) => {
+    if (e.target.classList.contains('tag')) {
+        const category = e.target.dataset.category;
+        
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.classList.remove('inactive');
+        });
+        
+        if (category !== 'all') {
+            document.querySelectorAll('.tag').forEach(tag => {
+                if (tag.dataset.category !== category && tag.dataset.category !== 'all') {
+                    tag.classList.add('inactive');
+                }
+            });
+        }
+        
+        currentFilter = category;
+        renderFilteredNews();
+    }
+});
+
+async function fetchLiveNews() {
+    const container = document.getElementById('news-container');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Fetching latest news including your custom topics...</p></div>';
+    
+    try {
+        // Build query with user keywords
+        const keywordsParam = userKeywords.length > 0 
+            ? '&keywords=' + encodeURIComponent(JSON.stringify(userKeywords))
+            : '';
+        
+        const response = await fetch('/api/news' + (keywordsParam ? '?' + keywordsParam.slice(1) : ''));
+        const data = await response.json();
+        
+        if (data.articles && data.articles.length > 0) {
+            allArticles = data.articles;
+            renderFilteredNews();
+            
+            localStorage.setItem('newsCache', JSON.stringify(allArticles));
+            localStorage.setItem('newsCacheTime', Date.now().toString());
+        } else {
+            container.innerHTML = '<div class="loading"><p>No news available. Try again later.</p></div>';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        
+        const cached = localStorage.getItem('newsCache');
+        if (cached) {
+            allArticles = JSON.parse(cached);
+            renderFilteredNews();
+            container.innerHTML = '<div class="loading" style="background:#fff3cd;color:#856404"><p>⚠️ Showing cached news. Could not fetch latest updates.</p></div>' + container.innerHTML;
+        } else {
+            container.innerHTML = '<div class="loading"><p>❌ Error loading news. Please try again.</p></div>';
+        }
+    }
+}
+
+function renderFilteredNews() {
+    const container = document.getElementById('news-container');
+    const settings = getSettings();
+    const maxArticles = settings.articleCount || 20;
+    
+    let filtered = allArticles;
+    if (currentFilter !== 'all') {
+        filtered = allArticles.filter(article => article.category === currentFilter);
+    }
+    
+    const articlesToShow = filtered.slice(0, maxArticles);
+    
+    if (articlesToShow.length === 0) {
+        container.innerHTML = '<div class="loading"><p>No articles found for this filter. Try "All News" or add more custom keywords!</p></div>';
+        return;
+    }
+    
+    container.innerHTML = articlesToShow.map((article, i) => `
+        <div class="news-card">
+            <div class="news-category">${article.category || 'News'}</div>
+            <h3 class="news-title">${article.title}</h3>
+            <p class="news-description">${article.description || ''}</p>
+            ${article.extendedSummary ? `
+            <div class="news-summary">
+                <div class="summary-header">⚡ Extended Summary (90-120 sec read)</div>
+                <div class="summary-text">${article.extendedSummary}</div>
+                <div class="read-time">📖 Reading time: ~${Math.ceil(article.extendedSummary.split(' ').length / 200)} min</div>
+                <button class="read-btn" id="btn-${i}" onclick="toggleSpeak(${i})">
+                    <span id="icon-${i}">🔊</span> <span id="label-${i}">Read Aloud</span>
+                </button>
+            </div>
+            ` : ''}
+            <div class="news-meta">
+                <span class="news-source">📰 ${article.source?.name || 'Source'}</span>
+                <span>🕒 ${getTimeAgo(article.publishedAt)}</span>
+            </div>
+            <a href="${article.url}" target="_blank" class="article-link" onclick="event.stopPropagation()">
+                📄 Read Full Article →
+            </a>
+        </div>
+    `).join('');
+    
+    window.newsArticles = articlesToShow;
+}
+
+function toggleSpeak(i) {
+    if (currentSpeech) {
+        window.speechSynthesis.cancel();
+        if (currentIndex >= 0) {
+            const prevBtn = document.getElementById(`btn-${currentIndex}`);
+            const prevIcon = document.getElementById(`icon-${currentIndex}`);
+            const prevLabel = document.getElementById(`label-${currentIndex}`);
+            if (prevBtn) prevBtn.classList.remove('playing');
+            if (prevIcon) prevIcon.textContent = '🔊';
+            if (prevLabel) prevLabel.textContent = 'Read Aloud';
+        }
+        currentSpeech = null;
+        if (i === currentIndex) {
+            currentIndex = -1;
+            return;
+        }
+    }
+
+    const article = window.newsArticles[i];
+    const text = (article.title || '') + '. ' + (article.extendedSummary || article.description || '');
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.rate = 0.95;
+    speech.pitch = 1.0;
+    speech.volume = 1.0;
+
+    const btn = document.getElementById(`btn-${i}`);
+    const icon = document.getElementById(`icon-${i}`);
+    const label = document.getElementById(`label-${i}`);
+    btn.classList.add('playing');
+    icon.textContent = '⏸️';
+    label.textContent = 'Stop';
+
+    speech.onend = () => {
+        btn.classList.remove('playing');
+        icon.textContent = '🔊';
+        label.textContent = 'Read Aloud';
+        currentSpeech = null;
+        currentIndex = -1;
+    };
+
+    window.speechSynthesis.speak(speech);
+    currentSpeech = speech;
+    currentIndex = i;
+}
+
+function getTimeAgo(dateString) {
+    if (!dateString) return 'Recently';
+    const now = new Date();
+    const published = new Date(dateString);
+    const diffMs = now - published;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    
+    if (diffHours < 1) return 'Just now';
+    if (diffHours === 1) return '1 hour ago';
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return published.toLocaleDateString();
+}
+
+function enableNotifications() {
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                document.getElementById('notifBanner').classList.remove('show');
+                new Notification('🎉 Daily Notifications Enabled!', {
+                    body: 'You\'ll receive your personalized news digest every day at 12:00 PM',
+                    icon: '📰'
+                });
+                
+                scheduleDailyNotification();
+                localStorage.setItem('notificationsEnabled', 'true');
+            }
+        });
+    } else {
+        alert('Notifications are not supported in your browser.');
+    }
+}
+
+function scheduleDailyNotification() {
+    setInterval(() => {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        
+        if (hours === 12 && minutes === 0) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const lastNotif = localStorage.getItem('lastNotificationDate');
+                const today = now.toDateString();
+                
+                if (lastNotif !== today) {
+                    new Notification('📰 Your Daily News is Ready!', {
+                        body: `${allArticles.length} fresh articles including your custom topics!`,
+                        icon: '📰',
+                        requireInteraction: true
+                    });
+                    localStorage.setItem('lastNotificationDate', today);
+                }
+            }
+        }
+    }, 60000);
+}
+
+function openSettings() {
+    document.getElementById('settingsModal').classList.add('show');
+    const settings = getSettings();
+    document.getElementById('articleCount').value = settings.articleCount || 20;
+    document.getElementById('countDisplay').textContent = settings.articleCount || 20;
+}
+
+function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('show');
+}
+
+function saveSettings() {
+    const settings = {
+        articleCount: parseInt(document.getElementById('articleCount').value),
+        savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('newsSettings', JSON.stringify(settings));
+    closeSettings();
+    renderFilteredNews();
+    alert('✅ Settings saved successfully!');
+}
+
+function getSettings() {
+    const saved = localStorage.getItem('newsSettings');
+    return saved ? JSON.parse(saved) : { articleCount: 20 };
+}
+
+function shareApp() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'My Personalized News App',
+            text: 'Check out my custom news app with personalized keyword tracking!',
+            url: window.location.href
+        });
+    } else {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('📋 App URL copied to clipboard!');
+        }).catch(() => {
+            alert('📋 Share this URL: ' + url);
+        });
+    }
+}
+
+function init() {
+    loadUserKeywords();
+    
+    const cached = localStorage.getItem('newsCache');
+    const cacheTime = localStorage.getItem('newsCacheTime');
+    
+    if (cached && cacheTime) {
+        const age = Date.now() - parseInt(cacheTime);
+        if (age < 3600000) {
+            allArticles = JSON.parse(cached);
+            renderFilteredNews();
+        }
+    }
+    
+    fetchLiveNews();
+    
+    if ('Notification' in window && Notification.permission === 'default') {
+        document.getElementById('notifBanner').classList.add('show');
+    }
+    
+    if (localStorage.getItem('notificationsEnabled') === 'true') {
+        scheduleDailyNotification();
+    }
+}
+
+init();
+</script>
+</body>
+</html>
